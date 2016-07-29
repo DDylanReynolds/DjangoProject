@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Index</title>
+	<style>body{background-color: red;</style>
+</head>
+<body>
+
+
+	<h1>{{title}}</h1>
+{%for obj in object_list%}
+	<h2><a href = '{{obj.get_absolute_url}}'>{{obj.title}}</a></h2>
+	<!--this method is url, name, 
+	<!-a href = '/posts/{{obj.id}}/' is one way to make this work-->
+	{{obj.content}} <br/>
+	{{obj.timestamp}}<br/>
+	{{obj.update}}<br/>
+	{{obj.id}}<br/>
+{%endfor%}
+</body>
+</html>
