@@ -1,10 +1,20 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
+from .forms import PostForm
 from .models import Post
 
 
 def post_create(request):
-	return HttpResponse('<h1>Update</h1>')
+	#if request.method == "POST":
+		#print(request.POST.get('title'))
+		#print(request.POST.get('content'))
+		#Post.objects.create('title'=title)
+	form = PostForm(request.POST or None)
+	if form.is_valid():
+		instance = form.save(commit=False)
+		instance.save()
+	context = {'form': form}
+	return render(request, 'post_form.html', context)
 def post_detail(request, id=None):
 	instance = get_object_or_404(Post, id=id)
 	context = {"title":instance.title, "instance": instance,}

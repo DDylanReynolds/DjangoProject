@@ -135,7 +135,7 @@ def get_absolute_url(self):
 	add from django import forms
 	from.models import Post #or whatever your model is called
 	2)createa class with parameters (forms.ModelForm):
-	and inside that create class Meta:	
+	and inside that create class Meta:
 		model = modelname
 		fields =["title","content"] #fields will hold the fields from our model we wish to make into forms
 3) head to your views and import the class you created
@@ -145,7 +145,29 @@ now save it to a variable (this will allow us to use it in context)
 ex form = PostForm() ##initializes class and saves it to variable
 context = {"form": form}
 
+create a corresponding template 
+
 {{form.as_p}} puts form in a paragraph(form is a variable)
+create an input button <input type = 'submit' value = 'Create Post'/ > # just html syntax
+
+the python code to create the form as well as the button must be wrapped with html form tags. add a method attribute to form to make it Post
+ex <form method = 'POST' action=''></form> The default method is get, but if we wish to receive a form it must post to server, not get from server.
+the action attribute is says "to which url do I send the form to" leaving it blank posts it to current
+
+we now need to add {%csrf_token%} between form tags. This is basically built in django security
+
+I can do if request.method =="POST": #INSIDE OF MY VIEW FUNCTION
+				do something
+request.POST.get('title') or instead of title put content, whatever subfield i'd like to see.
+
+1)add request.POST as a parameter to your form class. ex form = PostForm(request.POST or None).
+this adds built in form validation. Adding the or None is necessary. IF i don't add it, django will always write "this is a required field." When I add it, django only says this after/if the user attempts to submit it empty
+2) when content is entered and submited, it goes through, but doesn't show up yet(it isn't saved/validated)
+3)to validate it, in my function add if(form is the variable that holds the submitted form)
+if form.is_valid():
+	instance = form.save(commit=False)
+	instance.save() 
+4)it now saves 
 
 
 

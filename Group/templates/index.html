@@ -3,20 +3,28 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Index</title>
-	<style>body{background-color: red;</style>
+	<style>body{background-color: #883022; box-sizing: border-box;
+				margin:0;
+				padding:0;
+				}
+				h2 {padding-left:1em;}
+				.indent{padding-left: 1em;}
+			.post {background-color: red;
+					min-width: 100%;
+					display: inline-block;}</style>
 </head>
 <body>
 
 
 	<h1>{{title}}</h1>
 {%for obj in object_list%}
-	<h2><a href = '{{obj.get_absolute_url}}'>{{obj.title}}</a></h2>
+	<div class = 'post'><h2><a href = '{{obj.get_absolute_url}}'>{{obj.title}}</a></h2>
 	<!--this method is url, name, 
 	<!-a href = '/posts/{{obj.id}}/' is one way to make this work-->
-	{{obj.content}} <br/>
-	{{obj.timestamp}}<br/>
-	{{obj.update}}<br/>
-	{{obj.id}}<br/>
+	<span class = "indent">{{obj.content}}</span> <br/>
+	<span class = "indent">Date Created:{{obj.timestamp}}</span><br/>
+	<span class = "indent">Last Updated:{{obj.update}}<br/></span>
+	<span class = "indent">{{obj.id}}</span></div>
 {%endfor%}
 </body>
 </html>
