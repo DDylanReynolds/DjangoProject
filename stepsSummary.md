@@ -3,9 +3,9 @@ Create an app, add it to settings.py
 change timezone in settings.py
 in polls app we used more than just appname in INSTALLED_APPS, why?
 check out CRUD on wikipedia, get,post,put,delete
-#compare the render methods I used on this vs other (shortcut vs reg)
+compare the render methods I used on this vs other (shortcut vs reg)
 
-for Djangoproject
+#Djangoproject
 1) pip install django inside the virtualenv
 2)django-admin startproject Group
 3)cd into it, then python mange.py runserver #it will say unapplied migrations
@@ -26,14 +26,14 @@ inside the class create a function named __str__(self)
 10)python manage.py makemigrations #django now sees changes, but hasn't applied them
 11) python manage.py migrate #now the changes have been applied
 
-########Making the model viewable in admin
+######Making the model viewable in admin
 in admin.py
 from models import the class, then register it to admin site by writing
 admin.site.register(Post) instead of Post, write whichever class you wish to register
 
 12)once it is registered, I can view AND EDIT the model via admin interface
 
-##########Customizing admin interface
+######Customizing admin interface
 	create a class in admin.py with admin.ModelAdmin as parameter 
 	and write class Meta:
 					model = class were linking it to
@@ -48,7 +48,7 @@ serach_fields[] allows you to add a search bar to admin
 list_editable=[] makes them editable. check out all the others for model admin in
  <a>https://docs.djangoproject.com/en/1.9/ref/contrib/admin/</a>
 
- ###############views
+ ######views
  views.py (oftheapp)
  there are class based views and function-based views. We will first learn function-based(class is more advanced)
 
@@ -58,13 +58,13 @@ list_editable=[] makes them editable. check out all the others for model admin i
 	return HttpResponse(<h1>'I am posts_home'</h1>)
 	then to urls.py/urlpatterns add #url(r'nameinadressbarw/regex,'<appname>.views.functionname') 
 	to make it findable
-#################mapping urls to views. Uses python regular expressions. I have a guide for common ones on my github
+######mapping urls to views. Uses python regular expressions. I have a guide for common ones on my github
 
 Basically, the urls.py under our main project folder will lead us to app names and should have include('appname.urls'). we must import this from the same place as urls.
 This will lead us to the urlconfs under the app located in appname/urls.py
 this 13/38 helps alot <a>https://www.youtube.com/watch?v=nw3R2TXlkwY&list=PLEsfXFp6DpzQFqfCur9CJ4QnKQTVXUsRy&index=12#t=26.966970407</a>
 
-##################Setting up templates
+######Setting up templates
 
 create a folder on the same level as manage.py, any apps, and the main project.
 call it templates and add an html file inside of it.
@@ -80,7 +80,7 @@ if i have "title" = "BLALA" and I write {{title}} then my page wil have blabla
 writing #if request.user.is_authenticated(): then changing the context variable based on if-else statements is doable. the if-else lives inside the function in views. the #if request.user.is_authenticated(): will
 do something if a user is logged in
 
-###############Querysets    Querying database Models are found in models.py 
+######Querysets    Querying database Models are found in models.py 
 
 1) python manage.py shell ##(this opens basically another shell, but one that understands the django API)
 do a full path import of your model
@@ -97,7 +97,7 @@ I can also to .create(title = '', content='') once you fill in all the required 
 
 3) Update your views.py. import the class ex from .models import Post
 	I can can save Post.objects.all() to a variable and add it to the rendered dictionary to display in on a page.
-#####Super important!!!!!!!!!!
+######Super important!!!!!!!!!!
 if i want to do loops in templates I must do {% for n in whatever%}
 followed by {%endfor%} there is no need for indents in template, this is the loop syntax.
 
@@ -111,7 +111,7 @@ Basically get get_object_or_404(class,idorsub) gets  the specific object. if the
 save the object to a variable and I can now use it as well as its submethods to do things. I can choose to display certain parts via using its submethods and dictionaries/templates.
 
 
-#######Dynamic url routing vid 18
+######Dynamic url routing vid 18
 the thing i add in url routing ex
 url(r'^detail/(?P<id>\d$+)/$', post_detail), says if i have url detail/anid#/ call post_detail 
 in views.py, post_detail(request), add the parameter id so its now post_detail(request, id)
@@ -168,6 +168,61 @@ if form.is_valid():
 	instance = form.save(commit=False)
 	instance.save() 
 4)it now saves 
+###### postrequestvarname.cleaned_data.get('fieldname') will return the data
+
+####updating
+reminder, when you add a paramater to your views function, it needs to be in urls (url is what fills in those parameters) so if i have (request, id=None), in urls i need to write (?P<id>\d+) which basically takes in id=any number. The number is then passed to my views function and rendered via a template
+also, be sure to give your url a third parameter (name) in order to better connect it to templates
+
+once i've used the id to get a specific post and saved its data to a variable, I can add the paramater instance=variablename. Now its pulling in a pre-filled form.
+add the code:
+if form.is_valid(): #if form button is pushed and its valid, thsi all happens (basically it saves it)
+		instance = form.save(commit=False)
+		instance.save()
+now it will save the post i edited to the database, although it will not appear to have done anything at all. We fix this with a redirect
+
+When you submit a form, to make it redirect: in views.py add
+from django.http import HttpResponseRedirect
+then at the end of my if for.is_valid():
+							return HttpResponseRedirect(instance.get_absolute_url())
+#beause my instance was just a post object with an id, it will redirect me to the url that that post alone is located (whatever urls.py points to when given post/postid info)
+
+
+###### Success/error messages in 22, redo for clarity
+
+in views 
+from django.contrib import messages
+place statements inside of if form.is_valid(): or similar
+messages.success(request, "custom message")
+else:
+messages.error(request,"custom message")
+
+A third parameter can be added to these
+extratags ="tagname" this will add  css classes to it
+
+To get them to show up, have code that knows how to correspond to it in the LANDING template
+ex: when we create a post, our urls redirects us to post_detail. Our code that handles messages will live there in this form
+{% if messages %}
+<ul class = "messages">
+{% for message in messages %}
+<li{% if message.tags %} class = "{{message.tags}}"{%endif%}>{{ message }}</li>
+{% endfor %}
+</ul>
+#what to do/ show here
+{% endif %}
+
+It's import to iterate through all messages even if there is just one (to clear them basically)
+
+###### Delete a post (from db) and direct to different place
+in views, import redirect from django.shortcuts
+
+if instance = get_object_or_404(Post, id=id)
+instance.delete()  will delete it
+
+after its deleted, 
+return redirect("urlname") ex, for us its "post:list"
+
+make sure to add the required arguments to urls (to get the url initially, we need the id in our case)
 
 
 
