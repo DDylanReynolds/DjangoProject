@@ -1,5 +1,6 @@
-from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib import messages
+from django.shortcuts import render, get_object_or_404, redirect
 from .forms import PostForm
 from .models import Post
 
@@ -13,6 +14,8 @@ def post_create(request):
 	if form.is_valid():
 		instance = form.save(commit=False)
 		instance.save()
+		messages.success(request,"Message Saved")
+		return HttpResponseRedirect(instance.get_absolute_url())
 	context = {'form': form}
 	return render(request, 'post_form.html', context)
 def post_detail(request, id=None):
@@ -29,8 +32,22 @@ def post_list(request):
 	#	context = {"title": "Noone Logged In"}
 	return render(request,'index.html',context)
 	#request, template link, dictionary are the parameters
-	#return HttpResponse('<h1>List/Home</h1>')
-def post_update(request):
-	return HttpResponse('<h1>Update</h1>')
-def post_delete(request):
-	return HttpResponse('<h1>Delete</h1>')
+	#return HttpResponse('<h1>list/Home</h1>')
+def post_update(request, id=None):
+	instance = get_object_or_404(Post, id=id) #gets a post based on its id
+	form = PostForm(request.POST or None, instance=instance) #brings up the form with its writing in it(this is done by instance = instance)
+	if form.is_valid(): #if form button is pushed and its valid, this all happens (basically it saves it to db)
+		instance = form.save(commit=False)
+		instance.save()
+		messages.success(request, "Everything is working!!!!!!") #posts a message after redirect
+		return HttpResponseRedirect(instance.get_absolute_url()) #redirects us to absoluteURl of instance, which is just post_detail w that instances id args
+	context = {"title": instance.title,
+				"instance": instance,
+				"form":form,}
+	return render(request, 'post_form.html', context)#p1 request p2 template p3 dictionary(used in templates)
+def post_delete(request, id=None): #create a button leading to this url (which would call the function)
+	instance = get_object_or_404(Post, id=id)
+	instance.delete()
+	messages.success(request,"Post Deleted") #not defined in our list template yet
+	return redirect("posts:list")
+	

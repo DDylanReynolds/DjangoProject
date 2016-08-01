@@ -8,12 +8,12 @@ from .views import (
 	post_delete,)
 
 urlpatterns = [
-	url(r'^$', post_list),
+	url(r'^$', post_list, name = "list"),
 	#whats in url, view to return, name(optional), the name is essential tied to viewname.. detail = post_detail now
     url(r'^create$', post_create),
     url(r'^(?P<id>\d+)/$', post_detail, name= "detail"),
-    url(r'^update$', post_update),
-    url(r'^delete$', post_delete),
+    url(r'^(?P<id>\d+)/edit/$', post_update, name = "update"),
+    url(r'^(?P<id>\d+)/delete/$', post_delete),
     #url(r'nameinadressbarw/regex,'<appname>.views.functionname')
 ]
 #after i did from .views import () i deleted the relative path and used the function directly as path
